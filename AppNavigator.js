@@ -7,6 +7,7 @@ import SecondPage from './SecondPage';
 import TenisStezery from './TenisStezery';
 import ThirdPage from './ThirdPage';
 import TenisMenu from './TenisMenu';
+import TenisCourts from './TenisCourts';
 
 const Tab = createBottomTabNavigator();
 const TenisStack = createStackNavigator();
@@ -16,9 +17,11 @@ function TenisStezeryStack() {
         <TenisStack.Navigator screenOptions={{ headerShown: false }}>
             <TenisStack.Screen name="TenisStezery" component={TenisStezery} />
             <TenisStack.Screen name="TenisMenu" component={TenisMenu} />
+            <TenisStack.Screen name="TenisCourts" component={TenisCourts} />
         </TenisStack.Navigator>
     );
 }
+
 
 function AppNavigator() {
     return (
