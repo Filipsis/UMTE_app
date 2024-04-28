@@ -43,10 +43,39 @@ const TennisCourts = () => {
         true;
     `;
     const customScript3 = `
-        document.body.innerHTML = document.querySelector('.p-3.card-body').outerHTML;
-        window.ReactNativeWebView.postMessage(document.body.innerHTML);
-        true;
-    `;
+    setTimeout(function() {
+        const style = document.createElement('style');
+        style.textContent = \`
+            .sticky {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+            .schedule-table-container {
+                position: relative; /* Needed for sticky positioning */
+                overflow-x: auto; /* Allows horizontal scrolling */
+            }
+        \`;
+        document.head.appendChild(style);
+
+        const headers = Array.from(document.querySelectorAll('h2'));
+        const targetHeader = headers.find(h => h.textContent.includes('Venkovní kurty'));
+        if (targetHeader) {
+            let parentDiv = targetHeader.closest('.schedule-card');
+            if (parentDiv) {
+                document.body.innerHTML = ''; // Clear the existing page content
+                document.body.appendChild(parentDiv.cloneNode(true)); // Append only the required div
+            } else {
+                document.body.innerHTML = 'Target div not found';
+            }
+        } else {
+            document.body.innerHTML = 'Header not found';
+        }
+    }, 5000);
+    true;
+`;
+
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -77,12 +106,13 @@ const TennisCourts = () => {
                 <Text style={styles.header}>Teniscentrum DTJ</Text>
                 <WebView
                     source={{ uri: 'https://www.rezzy.eu/tenant-6/schedules' }}
+                    javaScriptEnabled={true}
                     injectedJavaScript={customScript3}
                     injectedJavaScriptForMainFrameOnly={false}
                     style={styles.webviewSmall}
                     onLoadEnd={() => console.log('WebView 3 loaded!')}
                     onMessage={(event) => {
-                        console.log('WebView 3 content: ', event.nativeEvent.data)
+                        console.log('WebView 3 content: ', event.nativeEvent.data);
                     }}
                 />
             </ScrollView>
@@ -99,7 +129,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     webviewSmall: {
-        height: 300,  // Fixed height for specific adjustment
+        height: 600,  // Increased height for WebView3
     },
     webviewLarge: {
         height: 300,  // Fixed height for specific adjustment
