@@ -4,24 +4,25 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import MainPage from './MainPage';
 import SecondPage from './SecondPage';
-import TenisStezery from './TenisStezery';
-import ThirdPage from './ThirdPage';
-import TenisMenu from './TenisMenu';
-import TenisCourts from './TenisCourts';
+import StezeryLogin from './StezeryLogin';
+import ThirdPage from './ThirdPage';  // Note: This is declared but not used in your provided code.
+import TennisMenu from './TennisMenu';
+import TennisCourts from './TennisCourts';
+import TennisHome from './TennisHome';
 
 const Tab = createBottomTabNavigator();
-const TenisStack = createStackNavigator();
+const TennisStackNavigator = createStackNavigator(); // Renamed to avoid naming conflict
 
-function TenisStezeryStack() {
+function TennisStackScreen() { // Renamed to avoid naming conflict
     return (
-        <TenisStack.Navigator screenOptions={{ headerShown: false }}>
-            <TenisStack.Screen name="TenisStezery" component={TenisStezery} />
-            <TenisStack.Screen name="TenisMenu" component={TenisMenu} />
-            <TenisStack.Screen name="TenisCourts" component={TenisCourts} />
-        </TenisStack.Navigator>
+        <TennisStackNavigator.Navigator screenOptions={{ headerShown: false }}>
+            <TennisStackNavigator.Screen name="TennisHome" component={TennisHome} />
+            <TennisStackNavigator.Screen name="StezeryLogin" component={StezeryLogin} />
+            <TennisStackNavigator.Screen name="TennisMenu" component={TennisMenu} />
+            <TennisStackNavigator.Screen name="TennisCourts" component={TennisCourts} />
+        </TennisStackNavigator.Navigator>
     );
 }
-
 
 function AppNavigator() {
     return (
@@ -29,7 +30,7 @@ function AppNavigator() {
             <Tab.Navigator>
                 <Tab.Screen name="Home" component={MainPage} options={{ tabBarLabel: 'Home' }} />
                 <Tab.Screen name="SecondPage" component={SecondPage} options={{ tabBarLabel: 'New Page' }} />
-                <Tab.Screen name="TenisStezery" component={TenisStezeryStack} options={{ tabBarLabel: 'Tenis Stěžery' }} />
+                <Tab.Screen name="TennisHome" component={TennisStackScreen} options={{ tabBarLabel: 'Tennis Home' }} />
             </Tab.Navigator>
         </NavigationContainer>
     );

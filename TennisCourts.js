@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-const TennisCourtSchedule = () => {
+const TennisCourts = () => {
     const customScript1 = `document.body.innerHTML = document.getElementById('calendarTable').outerHTML;true;`;
 
     // Immediately attempt to click the button when the script runs, without waiting for DOMContentLoaded
@@ -76,4 +76,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default TennisCourtSchedule;
+export default TennisCourts;

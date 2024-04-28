@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 
-function TenisStezery({ navigation }) {
+function StezeryLogin({ navigation }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loginResponse, setLoginResponse] = useState('');
@@ -31,7 +31,7 @@ function TenisStezery({ navigation }) {
 
                 if (username) {
                     console.log('Přihlášení bylo úspěšné, uživatel je:', username);
-                    navigation.navigate('TenisMenu', { userLogged: username });  // Předáváme username jako parametr
+                    navigation.navigate('TennisMenu', { userLogged: username });  // Předáváme username jako parametr
                 } else {
                     console.log('Přihlášení selhalo, nelze extrahovat uživatelské jméno.');
                     setLoginResponse('Login failed: Cannot extract username');
@@ -96,4 +96,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default TenisStezery;
+export default StezeryLogin;
