@@ -44,32 +44,14 @@ const TennisCourts = () => {
     `;
     const customScript3 = `
     setTimeout(function() {
-        const style = document.createElement('style');
-        style.textContent = \`
-            .sticky {
-                position: sticky;
-                top: 0;
-                z-index: 10;
-            }
-            .schedule-table-container {
-                position: relative; /* Needed for sticky positioning */
-                overflow-x: auto; /* Allows horizontal scrolling */
-            }
-        \`;
-        document.head.appendChild(style);
-
-        const headers = Array.from(document.querySelectorAll('h2'));
-        const targetHeader = headers.find(h => h.textContent.includes('Venkovní kurty'));
-        if (targetHeader) {
-            let parentDiv = targetHeader.closest('.schedule-card');
-            if (parentDiv) {
-                document.body.innerHTML = ''; // Clear the existing page content
-                document.body.appendChild(parentDiv.cloneNode(true)); // Append only the required div
-            } else {
-                document.body.innerHTML = 'Target div not found';
-            }
+        const cardColumns = document.querySelectorAll('.card-column');
+        if (cardColumns.length > 0) {
+            document.body.innerHTML = ''; // Clear the existing page content
+            cardColumns.forEach(function(column) {
+                document.body.appendChild(column.cloneNode(true)); // Append only the required divs
+            });
         } else {
-            document.body.innerHTML = 'Header not found';
+            document.body.innerHTML = 'No card-column divs found';
         }
     }, 5000);
     true;
