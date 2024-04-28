@@ -67,7 +67,7 @@ const TennisCourts = () => {
                     source={{ uri: 'http://www.sokolstezery.cz/ebooking/weekformaa?calendarId=1' }}
                     injectedJavaScript={customScript1}
                     injectedJavaScriptForMainFrameOnly={false}
-                    style={styles.webviewSmall}
+                    style={styles.webviewOne}
                     onLoad={() => console.log('WebView 1 loaded!')}
                     onMessage={(event) => {
                         console.log('event 1: ', event)
@@ -78,7 +78,7 @@ const TennisCourts = () => {
                     source={{ uri: 'https://memberzone.cz/sportparkhit/' }}
                     injectedJavaScript={customScript2}
                     injectedJavaScriptForMainFrameOnly={false}
-                    style={styles.webviewLarge}
+                    style={styles.webviewTwo}
                   //  onLoad={() => console.log('WebView 2 loaded!')}
                     onMessage={(event) => {
                         console.log('event 2: ', event)
@@ -91,7 +91,7 @@ const TennisCourts = () => {
                     javaScriptEnabled={true}
                     injectedJavaScript={customScript3}
                     injectedJavaScriptForMainFrameOnly={false}
-                    style={styles.webviewSmall}
+                    style={styles.webviewThree}
                     onLoadEnd={() => console.log('WebView 3 loaded!')}
                     onMessage={(event) => {
                         console.log('WebView 3 content: ', event.nativeEvent.data);
@@ -110,11 +110,14 @@ const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
     },
-    webviewSmall: {
-        height: 600,  // Increased height for WebView3
+    webviewOne: {
+        height: 200,  // Increased height for WebView3
     },
-    webviewLarge: {
-        height: 300,  // Fixed height for specific adjustment
+    webviewTwo: {
+        height: 400,  // Fixed height for specific adjustment
+    },
+    webviewThree: {
+        height: 500,  // Fixed height for specific adjustment
     },
     header: {
         fontSize: 20,

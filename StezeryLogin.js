@@ -31,7 +31,7 @@ function StezeryLogin({ navigation }) {
 
                 if (username) {
                     console.log('Přihlášení bylo úspěšné, uživatel je:', username);
-                    navigation.navigate('TennisMenu', { userLogged: username });  // Předáváme username jako parametr
+                    navigation.navigate('StezeryMenu', { userLogged: username });  // Předáváme username jako parametr
                 } else {
                     console.log('Přihlášení selhalo, nelze extrahovat uživatelské jméno.');
                     setLoginResponse('Login failed: Cannot extract username');

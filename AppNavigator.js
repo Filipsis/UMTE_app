@@ -6,9 +6,10 @@ import MainPage from './MainPage';
 import SecondPage from './SecondPage';
 import StezeryLogin from './StezeryLogin';
 import ThirdPage from './ThirdPage';  // Note: This is declared but not used in your provided code.
-import TennisMenu from './TennisMenu';
+import StezeryMenu from './StezeryMenu';
 import TennisCourts from './TennisCourts';
-import TennisHome from './TennisHome';
+import TennisHomePage from './TennisHome';
+import StezeryCourts from './StezeryCourts';
 
 const Tab = createBottomTabNavigator();
 const TennisStackNavigator = createStackNavigator(); // Renamed to avoid naming conflict
@@ -16,10 +17,11 @@ const TennisStackNavigator = createStackNavigator(); // Renamed to avoid naming 
 function TennisStackScreen() { // Renamed to avoid naming conflict
     return (
         <TennisStackNavigator.Navigator screenOptions={{ headerShown: false }}>
-            <TennisStackNavigator.Screen name="TennisHome" component={TennisHome} />
+            <TennisStackNavigator.Screen name="TennisHomePage" component={TennisHomePage} />
             <TennisStackNavigator.Screen name="StezeryLogin" component={StezeryLogin} />
-            <TennisStackNavigator.Screen name="TennisMenu" component={TennisMenu} />
+            <TennisStackNavigator.Screen name="StezeryMenu" component={StezeryMenu} />
             <TennisStackNavigator.Screen name="TennisCourts" component={TennisCourts} />
+            <TennisStackNavigator.Screen name="StezeryCourts" component={StezeryCourts} />
         </TennisStackNavigator.Navigator>
     );
 }

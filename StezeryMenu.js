@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
-function TennisMenu({ route, navigation }) {
+function StezeryMenu({ route, navigation }) {
     const userLogged = route.params?.userLogged ?? "Neznámý uživatel";  // Přijímáme username z navigace
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Uživatel: {userLogged}</Text>
             <View style={styles.buttonContainer}>
-                <Button title="Rezervovat kurt" onPress={() => navigation.navigate('TennisCourts')} />
+                <Button title="Rezervovat kurt" onPress={() => navigation.navigate('StezeryCourts')} />
                 <Button title="Moje rezervace" onPress={() => {/* Funkce pro zobrazení rezervací */}} />
                 <Button title="Historie objednávek" onPress={() => {/* Funkce pro historii objednávek */}} />
                 <Button title="Nastavení" onPress={() => {/* Funkce pro nastavení */}} />
@@ -17,7 +17,6 @@ function TennisMenu({ route, navigation }) {
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -37,4 +36,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default TennisMenu;
+export default StezeryMenu;

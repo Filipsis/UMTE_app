@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, Button, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
-import AppNavigator from './AppNavigator';
 
 export default function App() {
     const [address, setAddress] = useState('');
