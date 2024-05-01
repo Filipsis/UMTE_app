@@ -10,8 +10,6 @@ const StezeryCourts = () => {
     const [playerTwoPass, setPlayerTwoPass] = useState(false);
     const [courtNumber, setCourtNumber] = useState(1);
     const [date, setDate] = useState(new Date());
-    const [timeFrom, setTimeFrom] = useState('');
-    const [timeTo, setTimeTo] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     const showDatePicker = () => {
@@ -25,6 +23,46 @@ const StezeryCourts = () => {
     const handleConfirm = (date) => {
         setDate(date);
         hideDatePicker();
+    };
+    const [isTimePickerVisibleFrom, setTimePickerVisibilityFrom] = useState(false);
+    const [timeFrom, setTimeFrom] = useState(new Date());
+
+    const showTimePickerFrom = () => {
+        setTimePickerVisibilityFrom(true);
+    };
+
+    const hideTimePickerFrom = () => {
+        setTimePickerVisibilityFrom(false);
+    };
+
+    const handleTimeConfirmFrom = (selectedTimeFrom) => {
+        // Zaokrouhlit minuty na nejbližší půlhodinu
+        const minutes = selectedTimeFrom.getMinutes();
+        const roundedMinutes = minutes < 15 || minutes > 45 ? 0 : 30;
+        selectedTimeFrom.setMinutes(roundedMinutes);
+
+        setTimeFrom(selectedTimeFrom);
+        hideTimePickerFrom();
+    };
+
+    const [isTimePickerVisibleTo, setTimePickerVisibilityTo] = useState(false);
+    const [timeTo, setTimeTo] = useState(new Date());
+
+    const showTimePickerTo = () => {
+        setTimePickerVisibilityTo(true);
+    };
+
+    const hideTimePickerTo = () => {
+        setTimePickerVisibilityTo(false);
+    };
+
+    const handleTimeConfirmTo = (selectedTimeTo) => {
+        const minutes = selectedTimeTo.getMinutes();
+        const roundedMinutesTo = minutes < 15 || minutes > 45 ? 0 : 30;
+        selectedTimeTo.setMinutes(roundedMinutesTo);
+
+        setTimeTo(selectedTimeTo);
+        hideTimePickerTo();
     };
 
     const customScript1 = `
@@ -82,7 +120,7 @@ const StezeryCourts = () => {
                                 <View style={styles.radio}>
                                     {courtNumber===1 && <View style={styles.radioBg}></View>}
                                 </View>
-                                <Text style={styles.radioText}>Radio1</Text>
+                                <Text style={styles.radioText}>1     </Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={()=>setCourtNumber(2)}>
@@ -90,12 +128,32 @@ const StezeryCourts = () => {
                                 <View style={styles.radio}>
                                     {courtNumber===2 && <View style={styles.radioBg}></View>}
                                 </View>
-                                <Text style={styles.radioText}>Radio2</Text>
+                                <Text style={styles.radioText}>2</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
-                    <TextInput style={styles.input} placeholder="Čas od (HH:MM)" value={timeFrom} onChangeText={setTimeFrom}/>
-                    <TextInput style={styles.input} placeholder="Čas do (HH:MM)" value={timeTo} onChangeText={setTimeTo}/>
+                    <View style={styles.timePickerContainer}>
+                        <Text style={styles.timeLabel}>Čas od: </Text>
+                        <Text style={styles.timeDisplay} onPress={showTimePickerFrom}>{`${timeFrom.getHours()}:${timeFrom.getMinutes() === 0 ? '00' : '30'}`}</Text>
+                        <DateTimePickerModal
+                            date={timeFrom}
+                            isVisible={isTimePickerVisibleFrom}
+                            mode="time"
+                            onConfirm={handleTimeConfirmFrom}
+                            onCancel={hideTimePickerFrom}
+                        />
+                    </View>
+                    <View style={styles.timePickerContainer}>
+                        <Text style={styles.timeLabel}>Čas do: </Text>
+                        <Text style={styles.timeDisplay} onPress={showTimePickerTo}>{`${timeTo.getHours()}:${timeTo.getMinutes() === 0 ? '00' : '30'}`}</Text>
+                        <DateTimePickerModal
+                            date={timeTo}
+                            isVisible={isTimePickerVisibleTo}
+                            mode="time"
+                            onConfirm={handleTimeConfirmTo}
+                            onCancel={hideTimePickerTo}
+                        />
+                    </View>
                     <TextInput style={styles.input} placeholder="Hráč 1 (jméno a příjmení)" value={playerOne} onChangeText={setPlayerOne}/>
                     <TextInput style={styles.input} placeholder="Hráč 2 (jméno a příjmení)" value={playerTwo} onChangeText={setPlayerTwo}/>
                     <Button title="Rezervovat" onPress={() => console.log('Reservation confirmed.')}/>
@@ -120,25 +178,39 @@ const styles = StyleSheet.create({
             justifyContent: 'center'
         },
     radio: {
-        width: 20,
-        height: 20,
+        width: 15,
+        height: 15,
         borderColor: "black",
         borderRadius: 20,
         borderWidth: 2,
         margin: 10
     },
     radioText: {
-      fontSize: 20,
+      fontSize: 16,
     },
     wrapper:{
       flexDirection: 'row', alignItems: 'center'
     },
     radioBg: {
         backgroundColor: 'black',
-        height: 12,
-        width: 12,
-        margin: 2,
+        height: 9,
+        width: 9,
+        margin: 1,
         borderRadius: 15
+    },
+    timePickerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    timeLabel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginRight: 8,
+    },
+    timeDisplay: {
+        fontSize: 16,
+        color: 'blue',
     },
     webviewOne: {
         height: 200,
