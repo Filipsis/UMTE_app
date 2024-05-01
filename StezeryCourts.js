@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, SafeAreaView, Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { WebView } from 'react-native-webview';
+import axios from 'axios';
 
 const StezeryCourts = () => {
     const [playerOne, setPlayerOne] = useState('');
@@ -12,58 +13,33 @@ const StezeryCourts = () => {
     const [date, setDate] = useState(new Date());
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-    const showDatePicker = () => {
-        setDatePickerVisibility(true);
-    };
-
-    const hideDatePicker = () => {
-        setDatePickerVisibility(false);
-    };
-
-    const handleConfirm = (date) => {
-        setDate(date);
-        hideDatePicker();
-    };
+    const showDatePicker = () => { setDatePickerVisibility(true);};
+    const hideDatePicker = () => {setDatePickerVisibility(false);};
+    const handleConfirm = (date) => {setDate(date); hideDatePicker();};
     const [isTimePickerVisibleFrom, setTimePickerVisibilityFrom] = useState(false);
     const [timeFrom, setTimeFrom] = useState(new Date());
 
-    const showTimePickerFrom = () => {
-        setTimePickerVisibilityFrom(true);
-    };
-
-    const hideTimePickerFrom = () => {
-        setTimePickerVisibilityFrom(false);
-    };
-
+    const showTimePickerFrom = () => {setTimePickerVisibilityFrom(true);};
+    const hideTimePickerFrom = () => {setTimePickerVisibilityFrom(false);};
     const handleTimeConfirmFrom = (selectedTimeFrom) => {
         // Zaokrouhlit minuty na nejbližší půlhodinu
         const minutes = selectedTimeFrom.getMinutes();
         const roundedMinutes = minutes < 15 || minutes > 45 ? 0 : 30;
         selectedTimeFrom.setMinutes(roundedMinutes);
-
         setTimeFrom(selectedTimeFrom);
-        hideTimePickerFrom();
-    };
+        hideTimePickerFrom();};
 
     const [isTimePickerVisibleTo, setTimePickerVisibilityTo] = useState(false);
     const [timeTo, setTimeTo] = useState(new Date());
-
-    const showTimePickerTo = () => {
-        setTimePickerVisibilityTo(true);
-    };
-
-    const hideTimePickerTo = () => {
-        setTimePickerVisibilityTo(false);
-    };
+    const showTimePickerTo = () => {setTimePickerVisibilityTo(true);};
+    const hideTimePickerTo = () => {setTimePickerVisibilityTo(false);};
 
     const handleTimeConfirmTo = (selectedTimeTo) => {
         const minutes = selectedTimeTo.getMinutes();
         const roundedMinutesTo = minutes < 15 || minutes > 45 ? 0 : 30;
         selectedTimeTo.setMinutes(roundedMinutesTo);
-
         setTimeTo(selectedTimeTo);
-        hideTimePickerTo();
-    };
+        hideTimePickerTo();};
 
     const customScript1 = `
     var backWeekButton = document.getElementById('backWeekButton').outerHTML;
@@ -73,7 +49,7 @@ const StezeryCourts = () => {
     document.body.innerHTML = backWeekButton + currentWeekButton + nextWeekButton + calendarTable;
     true;
 `;
-    const handleReservation = () => {
+    const handleReservation = async () => {
         console.log('Reservation Details:', {
             date,
             courtNumber,
@@ -84,8 +60,60 @@ const StezeryCourts = () => {
                 { name: playerTwo, hasPass: playerTwoPass }
             ]
         });
-        // Logika pro zpracování rezervace (např. odeslání na server)
+
+        // Mapping Czech weekday names and English abbreviations
+        const czechDayNames = ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"];
+        const englishAbbrev = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+        // Format the date and time details
+        const dayOfWeekCzech = czechDayNames[date.getDay()];
+        const dayOfWeekEng = englishAbbrev[date.getDay()];
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const dateString = `${day}.${month}.${year}`;
+        const timeFromString = timeFrom.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(":", "");
+        const timeToString = timeTo.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(":", "");
+
+        console.log(`Sending request: day=${dayOfWeekCzech}, courtNumber=${courtNumber}, timeFrom=${timeFromString}, timeTo=${timeToString}, date=${dateString}`);
+
+        try {
+            // Fetch the webpage HTML content
+            const response = await axios.get('http://www.sokolstezery.cz/ebooking/weekformaa?calendarId=1');
+            const htmlContent = response.data;
+
+           // console.log(`Received response: ${htmlContent}`);
+
+            // Check for date in HTML content
+            const dateRegex = new RegExp(`<th rowspan=2 scope="row" id=rw0>${dayOfWeekCzech}<br>${dateString}</th>`);
+            if (!dateRegex.test(htmlContent)) {
+                console.log(`Date ${dateString} (${dayOfWeekCzech}) not found.`);
+                console.log(new RegExp(`<th rowspan=2 scope="row" id=rw0>${dayOfWeekCzech}<br>${dateString}</th>`));
+                return;
+            }
+
+            // Check availability for the specified time slot
+            const timeSlotRegex = new RegExp(`<th id="timeCell-${dayOfWeekEng}-${courtNumber}-${timeFromString}-${timeToString}"[^>]*class="([^"]*)`);
+            const match = timeSlotRegex.exec(htmlContent);
+
+            if (match) {
+                const classAttr = match[1];
+                if (classAttr.includes("booked")) {
+                    console.log(`Court ${courtNumber} is booked from ${timeFromString} to ${timeToString} on ${dateString}.`);
+                } else {
+                    console.log(`Court ${courtNumber} is available from ${timeFromString} to ${timeToString} on ${dateString}.`);
+                }
+            } else {
+                console.log(`No matching time slot found for Court ${courtNumber} from ${timeFromString} to ${timeToString} on ${dateString}.`);
+                console.log(new RegExp(`<th rowspan=2 scope="row" id=rw0>${dayOfWeekCzech}<br>${dateString}</th>`));
+                console.log( new RegExp(`<th id="timeCell-${dayOfWeekEng}-${courtNumber}-${timeFromString}-${timeToString}"[^>]*class="([^"]*)`));
+            }
+        } catch (error) {
+            console.log(`Error fetching response: ${error}`);
+        }
     };
+
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -156,7 +184,7 @@ const StezeryCourts = () => {
                     </View>
                     <TextInput style={styles.input} placeholder="Hráč 1 (jméno a příjmení)" value={playerOne} onChangeText={setPlayerOne}/>
                     <TextInput style={styles.input} placeholder="Hráč 2 (jméno a příjmení)" value={playerTwo} onChangeText={setPlayerTwo}/>
-                    <Button title="Rezervovat" onPress={() => console.log('Reservation confirmed.')}/>
+                    <Button title="Rezervovat" onPress={handleReservation} />
                 </View>
             </ScrollView>
         </SafeAreaView>
