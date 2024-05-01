@@ -14,7 +14,7 @@ function SecondPage() {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                setErrorMsg('Přístup k poloze zamítnut, pouze omezené funkce aplikace');
+                setErrorMsg('Přístup k poloze zamítnut, pouze omezené funkce aplikace budou dostupné.');
                 return;
             }
 
