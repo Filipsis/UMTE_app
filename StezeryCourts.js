@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, SafeAreaView, Text, View, TextInput, Button } from 'react-native';
+import { ScrollView, StyleSheet, SafeAreaView, Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { WebView } from 'react-native-webview';
 
@@ -8,7 +8,7 @@ const StezeryCourts = () => {
     const [playerTwo, setPlayerTwo] = useState('');
     const [playerOnePass, setPlayerOnePass] = useState(false);
     const [playerTwoPass, setPlayerTwoPass] = useState(false);
-    const [courtNumber, setCourtNumber] = useState('1');
+    const [courtNumber, setCourtNumber] = useState(1);
     const [date, setDate] = useState(new Date());
     const [timeFrom, setTimeFrom] = useState('');
     const [timeTo, setTimeTo] = useState('');
@@ -75,7 +75,25 @@ const StezeryCourts = () => {
 
                         />
                     </View>
-                    <TextInput style={styles.input} placeholder="Číslo kurtu (1 nebo 2)" value={courtNumber} onChangeText={setCourtNumber} keyboardType="numeric"/>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={styles.dateLabel}>Číslo kurtu:</Text>
+                        <TouchableOpacity onPress={()=>setCourtNumber(1)}>
+                            <View style={styles.wrapper}>
+                                <View style={styles.radio}>
+                                    {courtNumber===1 && <View style={styles.radioBg}></View>}
+                                </View>
+                                <Text style={styles.radioText}>Radio1</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>setCourtNumber(2)}>
+                            <View style={styles.wrapper}>
+                                <View style={styles.radio}>
+                                    {courtNumber===2 && <View style={styles.radioBg}></View>}
+                                </View>
+                                <Text style={styles.radioText}>Radio2</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                     <TextInput style={styles.input} placeholder="Čas od (HH:MM)" value={timeFrom} onChangeText={setTimeFrom}/>
                     <TextInput style={styles.input} placeholder="Čas do (HH:MM)" value={timeTo} onChangeText={setTimeTo}/>
                     <TextInput style={styles.input} placeholder="Hráč 1 (jméno a příjmení)" value={playerOne} onChangeText={setPlayerOne}/>
@@ -94,6 +112,33 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
+    },
+    radioStyle:
+        {
+            flex: 1,
+            alignItems: "center",
+            justifyContent: 'center'
+        },
+    radio: {
+        width: 20,
+        height: 20,
+        borderColor: "black",
+        borderRadius: 20,
+        borderWidth: 2,
+        margin: 10
+    },
+    radioText: {
+      fontSize: 20,
+    },
+    wrapper:{
+      flexDirection: 'row', alignItems: 'center'
+    },
+    radioBg: {
+        backgroundColor: 'black',
+        height: 12,
+        width: 12,
+        margin: 2,
+        borderRadius: 15
     },
     webviewOne: {
         height: 200,
@@ -125,7 +170,8 @@ const styles = StyleSheet.create({
     dateDisplay: {
         fontSize: 16,
         color: 'blue',
-    }
+    },
+
 });
 
 export default StezeryCourts;
