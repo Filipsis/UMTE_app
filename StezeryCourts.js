@@ -46,7 +46,7 @@ const StezeryCourts = () => {
                 { name: playerTwo, hasPass: playerTwoPass }
             ]
         });
-        // Zde přidejte logiku pro zpracování rezervace (např. odeslání na server)
+        // Logika pro zpracování rezervace (např. odeslání na server)
     };
 
     return (
