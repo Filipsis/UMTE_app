@@ -61,59 +61,65 @@ const StezeryCourts = () => {
             ]
         });
 
-        // Mapping Czech weekday names and English abbreviations
         const czechDayNames = ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"];
         const englishAbbrev = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-        // Format the date and time details
         const dayOfWeekCzech = czechDayNames[date.getDay()];
         const dayOfWeekEng = englishAbbrev[date.getDay()];
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
         const dateString = `${day}.${month}.${year}`;
-        const timeFromString = timeFrom.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(":", "");
-        const timeToString = timeTo.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(":", "");
 
-        console.log(`Sending request: day=${dayOfWeekCzech}, courtNumber=${courtNumber}, timeFrom=${timeFromString}, timeTo=${timeToString}, date=${dateString}`);
+        const splitTimeRange = (timeFrom, timeTo) => {
+            let blocks = [];
+            let start = new Date(timeFrom);
+
+            while (start < timeTo) {
+                const end = new Date(start);
+                end.setMinutes(start.getMinutes() + 30);
+                if (end > timeTo) break;
+
+                const timeFromString = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(":", "");
+                const timeToString = end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(":", "");
+
+                blocks.push({ timeFromString, timeToString });
+                start = end;
+            }
+
+            return blocks;
+        };
+
+        const timeBlocks = splitTimeRange(timeFrom, timeTo);
 
         try {
-            // Fetch the webpage HTML content
             const response = await axios.get('http://www.sokolstezery.cz/ebooking/weekformaa?calendarId=1');
             const htmlContent = response.data;
 
-           // console.log(`Received response: ${htmlContent}`);
 
-            // Check for date in HTML content
-            const dateRegex = new RegExp(`<th rowspan=2 scope="row" id=rw0>${dayOfWeekCzech}<br>${dateString}</th>`);
-            if (!dateRegex.test(htmlContent)) {
-                console.log(`Date ${dateString} (${dayOfWeekCzech}) not found.`);
-                console.log(new RegExp(`<th rowspan=2 scope="row" id=rw0>${dayOfWeekCzech}<br>${dateString}</th>`));
-                return;
-            }
+            for (const { timeFromString, timeToString } of timeBlocks) {
+                console.log(`Checking availability for Court ${courtNumber} from ${timeFromString} to ${timeToString} on ${dateString}`);
 
-            // Check availability for the specified time slot
-            const timeSlotRegex = new RegExp(`<th id="timeCell-${dayOfWeekEng}-${courtNumber}-${timeFromString}-${timeToString}"[^>]*class="([^"]*)`);
-            const match = timeSlotRegex.exec(htmlContent);
+                const timeSlotRegex = new RegExp(`<th id="timeCell-${dayOfWeekEng}-${courtNumber}-${timeFromString}-${timeToString}"[^>]*class="([^"]*)`);
+                const match = timeSlotRegex.exec(htmlContent);
 
-            if (match) {
-                const classAttr = match[1];
-                if (classAttr.includes("booked")) {
-                    console.log(`Court ${courtNumber} is booked from ${timeFromString} to ${timeToString} on ${dateString}.`);
+                if (match) {
+                    const classAttr = match[1];
+                    if (classAttr.includes("booked")) {
+                        console.log(`Court ${courtNumber} is booked from ${timeFromString} to ${timeToString} on ${dateString}.`);
+                        return;
+                    }
                 } else {
-                    console.log(`Court ${courtNumber} is available from ${timeFromString} to ${timeToString} on ${dateString}.`);
+                    console.log(`No matching time slot found for Court ${courtNumber} from ${timeFromString} to ${timeToString} on ${dateString}.`);
+                    return;
                 }
-            } else {
-                console.log(`No matching time slot found for Court ${courtNumber} from ${timeFromString} to ${timeToString} on ${dateString}.`);
-                console.log(new RegExp(`<th rowspan=2 scope="row" id=rw0>${dayOfWeekCzech}<br>${dateString}</th>`));
-                console.log( new RegExp(`<th id="timeCell-${dayOfWeekEng}-${courtNumber}-${timeFromString}-${timeToString}"[^>]*class="([^"]*)`));
             }
+
+            console.log(`Court ${courtNumber} is available for all time slots on ${dateString}.`);
         } catch (error) {
             console.log(`Error fetching response: ${error}`);
         }
     };
-
-
 
     return (
         <SafeAreaView style={styles.container}>

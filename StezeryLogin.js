@@ -1,14 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
 
 function StezeryLogin({ navigation }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loginResponse, setLoginResponse] = useState('');
 
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            try {
+                const response = await axios.get('http://www.sokolstezery.cz/ebooking/');
+
+                if (response.status === 200) {
+                    const setCookieHeader = response.headers['set-cookie'];
+                    if (setCookieHeader && setCookieHeader.length > 0) {
+                        // Parse the cookie to store only up to the first semicolon
+                        const fullCookie = setCookieHeader[0];
+                        const sessionCookie = fullCookie.split(';')[0];
+                        console.log('Parsed Session Cookie:', sessionCookie);
+
+                        await AsyncStorage.setItem('session_cookie', sessionCookie);
+                        console.log('Session cookie stored:', sessionCookie);
+                    }
+                } else {
+                    console.log('Failed to fetch initial data:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching initial data:', error);
+            }
+        };
+
+        fetchInitialData();
+    }, []);
+
     const handleLogin = async () => {
         const loginData = `userName=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&submit=++Přihlásit+`;
-        console.log('Odesílám přihlašovací údaje:', loginData);
 
         try {
             const response = await fetch('http://www.sokolstezery.cz/ebooking/loginAction', {
@@ -21,8 +49,7 @@ function StezeryLogin({ navigation }) {
 
             const responseBody = await response.text();
             console.log('Status kód odpovědi:', response.status);
-            console.log('Status text odpovědi:', response.statusText);
-            console.log('Odpověď ze serveru:', responseBody);
+           // console.log('Odpověď ze serveru:', responseBody);
 
             if (responseBody.includes("Uživatel")) {
                 const usernameRegex = /Uživatel: (\w+)/;
@@ -31,7 +58,7 @@ function StezeryLogin({ navigation }) {
 
                 if (username) {
                     console.log('Přihlášení bylo úspěšné, uživatel je:', username);
-                    navigation.navigate('StezeryMenu', { userLogged: username });  // Předáváme username jako parametr
+                    navigation.navigate('StezeryMenu', { userLogged: username }); // Pass username as a parameter
                 } else {
                     console.log('Přihlášení selhalo, nelze extrahovat uživatelské jméno.');
                     setLoginResponse('Login failed: Cannot extract username');
@@ -48,7 +75,6 @@ function StezeryLogin({ navigation }) {
             setLoginResponse('Error during login: ' + error.message);
         }
     };
-
 
     return (
         <View style={styles.container}>
