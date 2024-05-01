@@ -240,10 +240,18 @@ const StezeryCourts = () => {
                             onCancel={hideTimePickerTo}
                         />
                     </View>
-                    <TextInput style={styles.input} placeholder="Hráč 1 (jméno a příjmení)" value={playerOne} onChangeText={setPlayerOne}/>
-                    <TextInput style={styles.input} placeholder="Hráč 2 (jméno a příjmení)" value={playerTwo} onChangeText={setPlayerTwo}/>
-                    <Button title="Rezervovat" onPress={handleReservation} />
-                    <Button title="Test Request" onPress={handleTestRequest} />
+                    <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 2}}>
+                        <Text style={styles.timeLabel}>Hráč 1: </Text>
+                        <TextInput style={styles.input} placeholder="Hráč 1 (jméno a příjmení)" value={playerOne} />
+                        <Text style={styles.timeLabel}>P: </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 12}}>
+                        <Text style={styles.timeLabel}>Hráč 2: </Text>
+                        <TextInput style={styles.input} placeholder="Hráč 2 (jméno a příjmení)" value={playerTwo}
+                                   onChangeText={setPlayerTwo}/>
+                    </View>
+                    <Button title="Rezervovat" onPress={handleReservation}/>
+                    <Button title="Test Request" onPress={handleTestRequest}/>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -311,10 +319,12 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     input: {
-        height: 40,
+        height:30,
+        width: 120,
         marginBottom: 12,
         borderWidth: 1,
         padding: 10,
+        marginRight: 20
     },
     datePickerContainer: {
         flexDirection: 'row',
