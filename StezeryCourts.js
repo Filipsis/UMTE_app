@@ -4,6 +4,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {CheckBox} from 'react-native-btr';
 
 const StezeryCourts = () => {
     const [playerOne, setPlayerOne] = useState('');
@@ -89,13 +90,20 @@ const StezeryCourts = () => {
             } else {
                 console.log('Username not found.');
             }
-
+          //  console.log('Response Body:', responseBody);
+            //const playerOnePassMatch = responseBody.match(/name="pass".*? value="(true|false)"/i);
+            const playerOnePassMatch = responseBody.match(/name="pass"[\s\S]*?value="(true|false)"/i);
+            console.log('p1Pass', playerOnePassMatch);
+            if (playerOnePassMatch && playerOnePassMatch[1]) {
+                setPlayerOnePass(playerOnePassMatch[1] === "true");
+            } else {
+                console.log('Player one pass not found.');
+            }
         } catch (error) {
             console.error('Error making request:', error);
             Alert.alert('Error', 'An error occurred while making the test request.');
         }
     };
-
 
     useEffect(() => {
         handleTestRequest(); // Automatically call this function when the page loads
@@ -244,11 +252,21 @@ const StezeryCourts = () => {
                         <Text style={styles.timeLabel}>Hráč 1: </Text>
                         <TextInput style={styles.input} placeholder="Hráč 1 (jméno a příjmení)" value={playerOne} />
                         <Text style={styles.timeLabel}>P: </Text>
+                        <CheckBox
+                            checked={playerOnePass}
+                            style={styles.checkbox}
+                        />
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 12}}>
                         <Text style={styles.timeLabel}>Hráč 2: </Text>
                         <TextInput style={styles.input} placeholder="Hráč 2 (jméno a příjmení)" value={playerTwo}
                                    onChangeText={setPlayerTwo}/>
+                        <Text style={styles.timeLabel}>P: </Text>
+                        <CheckBox
+                            checked={playerTwoPass}
+                            onPress={() => setPlayerTwoPass(!playerTwoPass)}
+                            style={styles.checkbox}
+                        />
                     </View>
                     <Button title="Rezervovat" onPress={handleReservation}/>
                     <Button title="Test Request" onPress={handleTestRequest}/>
@@ -340,7 +358,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'blue',
     },
-
+    checkbox: {
+        marginLeft: 10,
+    },
 });
 
 export default StezeryCourts;
