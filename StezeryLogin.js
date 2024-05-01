@@ -39,17 +39,26 @@ function StezeryLogin({ navigation }) {
         const loginData = `userName=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&submit=++Přihlásit+`;
 
         try {
-            const response = await fetch('http://www.sokolstezery.cz/ebooking/loginAction', {
-                method: 'POST',
-                body: loginData,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
+            // Retrieve the session cookie from AsyncStorage
+            const sessionCookie = await AsyncStorage.getItem('session_cookie');
+
+            // Prepare the headers for the request
+            const headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            };
+
+            if (sessionCookie) {
+                headers['Cookie'] = sessionCookie;
+            }
+
+            // Make the POST request
+            const response = await axios.post('http://www.sokolstezery.cz/ebooking/loginAction', loginData, {
+                headers,
             });
 
-            const responseBody = await response.text();
+            const responseBody = response.data;
             console.log('Status kód odpovědi:', response.status);
-           // console.log('Odpověď ze serveru:', responseBody);
+            //console.log('Odpověď ze serveru:', responseBody);
 
             if (responseBody.includes("Uživatel")) {
                 const usernameRegex = /Uživatel: (\w+)/;

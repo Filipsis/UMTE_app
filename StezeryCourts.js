@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, SafeAreaView, Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { WebView } from 'react-native-webview';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const StezeryCourts = () => {
@@ -40,8 +41,25 @@ const StezeryCourts = () => {
         selectedTimeTo.setMinutes(roundedMinutesTo);
         setTimeTo(selectedTimeTo);
         hideTimePickerTo();};
+    const [cookies, setCookies] = useState('');
+    useEffect(() => {
+        const fetchCookies = async () => {
+            const storedCookies = await AsyncStorage.getItem('session_cookie');
+            setCookies(storedCookies);
+        };
 
-    const customScript1 = `
+        fetchCookies();
+    }, []);
+//     const customScript1 = `
+//     var backWeekButton = document.getElementById('backWeekButton').outerHTML;
+//     var currentWeekButton = document.getElementById('currentWeekButton').outerHTML;
+//     var nextWeekButton = document.getElementById('nextWeekButton').outerHTML;
+//     var calendarTable = document.getElementById('calendarTable').outerHTML;
+//     document.body.innerHTML = backWeekButton + currentWeekButton + nextWeekButton + calendarTable;
+//     true;
+// `;
+    const injectedJavaScript = `
+    document.cookie = "${cookies}";
     var backWeekButton = document.getElementById('backWeekButton').outerHTML;
     var currentWeekButton = document.getElementById('currentWeekButton').outerHTML;
     var nextWeekButton = document.getElementById('nextWeekButton').outerHTML;
@@ -49,6 +67,40 @@ const StezeryCourts = () => {
     document.body.innerHTML = backWeekButton + currentWeekButton + nextWeekButton + calendarTable;
     true;
 `;
+
+    const handleTestRequest = async () => {
+        try {
+            // Retrieve cookies from AsyncStorage
+            const cookies = await AsyncStorage.getItem('session_cookie');
+            const headers = cookies ? { Cookie: cookies } : {};
+
+            // Make a GET request to the specified URL
+            const response = await axios.get('http://www.sokolstezery.cz/ebooking/order?mondaydate=20240429&timeslot=20240505_2100-2130&subjectId=1&calendarId=1&veri=SlzfOy2Wfuc0FlUp3IMO2ptPwvd8fldG&src=weekformaa', {
+                headers,
+            });
+
+            const responseBody = response.data;
+
+            // Extract username from the response body
+            const userNameMatch = responseBody.match(/name="userName".*? value='([^']+)'/i);
+            console.log('Match Result:', userNameMatch);
+            if (userNameMatch && userNameMatch[1]) {
+                setPlayerOne(userNameMatch[1]);
+            } else {
+                console.log('Username not found.');
+            }
+
+        } catch (error) {
+            console.error('Error making request:', error);
+            Alert.alert('Error', 'An error occurred while making the test request.');
+        }
+    };
+
+
+    useEffect(() => {
+        handleTestRequest(); // Automatically call this function when the page loads
+    }, []);
+
     const handleReservation = async () => {
         console.log('Reservation Details:', {
             date,
@@ -127,7 +179,7 @@ const StezeryCourts = () => {
                 <Text style={styles.header}>Stěžery</Text>
                 <WebView
                     source={{ uri: 'http://www.sokolstezery.cz/ebooking/weekformaa?calendarId=1' }}
-                    injectedJavaScript={customScript1}
+                    injectedJavaScript={injectedJavaScript}
                     injectedJavaScriptForMainFrameOnly={false}
                     style={styles.webviewOne}
                     onLoad={() => console.log('WebView 1 loaded!')}
@@ -191,6 +243,7 @@ const StezeryCourts = () => {
                     <TextInput style={styles.input} placeholder="Hráč 1 (jméno a příjmení)" value={playerOne} onChangeText={setPlayerOne}/>
                     <TextInput style={styles.input} placeholder="Hráč 2 (jméno a příjmení)" value={playerTwo} onChangeText={setPlayerTwo}/>
                     <Button title="Rezervovat" onPress={handleReservation} />
+                    <Button title="Test Request" onPress={handleTestRequest} />
                 </View>
             </ScrollView>
         </SafeAreaView>
