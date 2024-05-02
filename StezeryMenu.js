@@ -15,8 +15,15 @@ function StezeryMenu({ route, navigation }) {
                 console.log('Logout request successful.');
 
                 // Remove the stored cookie
-                await AsyncStorage.removeItem('login_cookie');
+                await AsyncStorage.removeItem('session_cookie');
                 console.log('Cookie removed.');
+                AsyncStorage.getItem('session_cookie')
+                    .then(sessionCookie => {
+                        console.log('Session Cookie:', sessionCookie);
+                    })
+                    .catch(error => {
+                        console.error('Error retrieving session cookie:', error);
+                    });
 
                 navigation.navigate('TennisHome'); // Navigate back to the login page
             } else {

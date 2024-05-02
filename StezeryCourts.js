@@ -19,6 +19,8 @@ const StezeryCourts = () => {
     const [isTimePickerVisibleTo, setTimePickerVisibilityTo] = useState(false);
     const [timeTo, setTimeTo] = useState(new Date());
     const [cookies, setCookies] = useState('');
+    const [cookiesFetched, setCookiesFetched] = useState(false);
+
 
     const showDatePicker = () => setDatePickerVisibility(true);
     const hideDatePicker = () => setDatePickerVisibility(false);
@@ -49,16 +51,25 @@ const StezeryCourts = () => {
 
     useEffect(() => {
         const fetchCookies = async () => {
-            const storedCookies = await AsyncStorage.getItem('session_cookie');
-            setCookies(storedCookies);
+            try {
+                const storedCookies = await AsyncStorage.getItem('session_cookie');
+                if (storedCookies !== null) {
+                    setCookies(storedCookies);
+                } else {
+                    console.log('No session cookie found.');
+                }
+            } catch (error) {
+                console.error('Error fetching cookies:', error);
+            }
+            setCookiesFetched(true);
         };
+
         fetchCookies();
     }, []);
 
     const injectedJavaScript = `
-    document.cookie = "${cookies}";
-    var backWeekButton = document.getElementById('backWeekButton').outerHTML;
-    var currentWeekButton = document.getElementById('currentWeekButton').outerHTML;
+    var backWeekButton = document.getId('backWeekButton').outerHTML;
+    var currentWeekButton = document.getId('currentWeekButton').outerHTML;
     var nextWeekButton = document.getId('nextWeekButton').outerHTML;
     var calendarTable = document.getId('calendarTable').outerHTML;
     document.body.innerHTML = backWeekButton + currentWeekButton + nextWeekButton + calendarTable;
@@ -254,13 +265,20 @@ const StezeryCourts = () => {
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView}>
                 <Text style={styles.header}>Stěžery</Text>
-                <WebView
-                    source={{ uri: 'http://www.sokolstezery.cz/ebooking/weekformaa?calendarId=1' }}
-                    injectedJavaScript={injectedJavaScript}
-                    injectedJavaScriptForMainFrameOnly={false}
-                    style={styles.webviewOne}
-                    onLoad={() => console.log('WebView 1 loaded!')}
-                />
+                {cookiesFetched && (
+                    <WebView
+                        source={{
+                            uri: 'http://www.sokolstezery.cz/ebooking/weekformaa?calendarId=1',
+                            headers: {Cookie: cookies,},
+                        }}
+                        injectedJavaScript={injectedJavaScript}
+                        injectedJavaScriptForMainFrameOnly={false}
+                        style={styles.webviewOne}
+                        onLoad={() => console.log('WebView 1 loaded!')}
+                    />
+                )
+            }
+
                 <View style={styles.reservationForm}>
                     <View style={styles.datePickerContainer}>
                         <Text style={styles.dateLabel}>Datum: </Text>

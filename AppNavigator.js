@@ -8,7 +8,7 @@ import StezeryLogin from './StezeryLogin';
 import ThirdPage from './ThirdPage';  // Note: This is declared but not used in your provided code.
 import StezeryMenu from './StezeryMenu';
 import TennisCourts from './TennisCourts';
-import TennisHomePage from './TennisHome';
+import TennisHome from './TennisHome';
 import StezeryCourts from './StezeryCourts';
 
 const Tab = createBottomTabNavigator();
@@ -17,7 +17,7 @@ const TennisStackNavigator = createStackNavigator(); // Renamed to avoid naming 
 function TennisStackScreen() { // Renamed to avoid naming conflict
     return (
         <TennisStackNavigator.Navigator screenOptions={{ headerShown: false }}>
-            <TennisStackNavigator.Screen name="TennisHomePage" component={TennisHomePage} />
+            <TennisStackNavigator.Screen name="TennisHome" component={TennisHome} />
             <TennisStackNavigator.Screen name="StezeryLogin" component={StezeryLogin} />
             <TennisStackNavigator.Screen name="StezeryMenu" component={StezeryMenu} />
             <TennisStackNavigator.Screen name="TennisCourts" component={TennisCourts} />
@@ -32,7 +32,7 @@ function AppNavigator() {
             <Tab.Navigator>
                 <Tab.Screen name="Home" component={MainPage} options={{ tabBarLabel: 'Home' }} />
                 <Tab.Screen name="SecondPage" component={SecondPage} options={{ tabBarLabel: 'New Page' }} />
-                <Tab.Screen name="TennisHome" component={TennisStackScreen} options={{ tabBarLabel: 'Tennis Home' }} />
+                <Tab.Screen name="Sekce tenisu" component={TennisStackScreen} options={{ tabBarLabel: 'Sekce Tenis' }} />
             </Tab.Navigator>
         </NavigationContainer>
     );
