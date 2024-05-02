@@ -19,7 +19,10 @@ function ThirdPage() {
     const [response, setResponse] = useState('');
 
     const handleSubmit = async () => {
-        const data = `bookingId=${bookingId}&mondaydate=${mondaydate}&timeslot=${timeslot}&subjectId=${subjectId}&calendarId=${calendarId}&src=${src}&veri=${veri}&userName=${encodeURIComponent(userName)}&personName0=${encodeURIComponent(personName0)}&personPass0=${personPass0}&personName1=${encodeURIComponent(personName1)}&personPass1=${personPass1}&personName2=${encodeURIComponent(personName2)}&personPass2=${personPass2}&submitnew=Objednat`;
+        const data = `bookingId=${bookingId}&mondaydate=${mondaydate}&timeslot=${timeslot}&subjectId=${subjectId}&calendarId=
+        ${calendarId}&src=${src}&veri=${veri}&userName=${encodeURIComponent(userName)}&personName0=${encodeURIComponent(personName0)}
+        &personPass0=${personPass0}&personName1=${encodeURIComponent(personName1)}&personPass1=${personPass1}&personName2=$
+        {encodeURIComponent(personName2)}&personPass2=${personPass2}&submitnew=Objednat`;
 
         console.log('Sending data:', data);
         try {
