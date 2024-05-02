@@ -20,6 +20,7 @@ const StezeryCourts = () => {
     const [timeTo, setTimeTo] = useState(new Date());
     const [cookies, setCookies] = useState('');
     const [cookiesFetched, setCookiesFetched] = useState(false);
+    const webviewRef = React.useRef(null);
 
 
     const showDatePicker = () => setDatePickerVisibility(true);
@@ -253,6 +254,7 @@ const StezeryCourts = () => {
                 }
 
                 console.log("Reservations processed.");
+                webviewRef.current?.reload();
             }
 
         } catch (error) {
@@ -267,6 +269,7 @@ const StezeryCourts = () => {
                 <Text style={styles.header}>Stěžery</Text>
                 {cookiesFetched && (
                     <WebView
+                        ref={webviewRef}
                         source={{
                             uri: 'http://www.sokolstezery.cz/ebooking/weekformaa?calendarId=1',
                             headers: {Cookie: cookies,},
