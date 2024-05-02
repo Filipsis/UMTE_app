@@ -194,6 +194,97 @@ const StezeryCourts = () => {
         }
     };
 
+    const handleReservation = async () => {
+        const splitTimeRange = (timeFrom, timeTo) => {
+            let blocks = [];
+            let start = new Date(timeFrom);
+
+            while (start < timeTo) {
+                const end = new Date(start);
+                end.setMinutes(start.getMinutes() + 30);
+
+                if (end > timeTo) break;
+
+                const timeFromString = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(":", "");
+                const timeToString = end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(":", "");
+
+                blocks.push({ timeFromString, timeToString });
+                start = end;
+            }
+
+            return blocks;
+        };
+
+        const timeBlocks = splitTimeRange(timeFrom, timeTo);
+
+        const veriValuesJSON = await AsyncStorage.getItem("timeCellVeri");
+        const veriValues = veriValuesJSON ? JSON.parse(veriValuesJSON) : {};
+
+        const reservationPromises = timeBlocks.map(async ({ timeFromString, timeToString }) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const timeSlot = `${year}${month}${day}_${timeFromString}-${timeToString}`;
+            const englishAbbrev = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+            const dayOfWeekEng = englishAbbrev[date.getDay()];
+
+            const params = {
+                "bookingId": "",
+                "mondaydate": "20240422",
+                "timeslot": timeSlot,
+                "subjectId": courtNumber.toString(),
+                "calendarId": "1",
+                "src": "weekformaa",
+                "veri": veriValues[`timeCell-${dayOfWeekEng}-${courtNumber}-${timeFromString}-${timeToString}`] || "",
+                "userName": playerOne.replace(" ", "+"),
+                "personName0": playerTwo.replace(" ", "+"),
+                "personPass0": playerTwoPass.toString(),
+                "personName1": "",
+                "personName2": "",
+                "personName3": "",
+                "submitnew": "Objednat"
+            };
+
+            const cookies = await AsyncStorage.getItem("session_cookie");
+
+            const headers = {
+                "Accept": "*/*",
+                "Accept-Encoding": "gzip, deflate",
+                "Accept-Language": "cs-CZ,cs;q=0.9,en;q=0.8",
+                "Cache-Control": "max-age=0",
+                "Connection": "keep-alive",
+                "Content-Length": "265",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Cookie": cookies,
+                "Host": "www.sokolstezery.cz",
+                "Origin": "http://www.sokolstezery.cz"
+            };
+
+            console.log(`Reservation Request:\nParams: ${JSON.stringify(params, null, 2)}\nHeaders: ${JSON.stringify(headers, null, 2)}`);
+            console.log(`Reservation Request: bookingId=&mondaydate=20240422&timeslot=${timeSlot}&subjectId=${courtNumber}&calendarId=1&src=weekformaa&veri=${params.veri}&userName=${params.userName}&personName0=${params.personName0}&personPass0=${params.personPass0}&personName1=&personName2=&personName3=&submitnew=Objednat`);
+
+
+            try {
+                const response = await axios.post(
+                    'http://www.sokolstezery.cz/ebooking/orderAction',
+                    null,
+                    { params, headers }
+                );
+                console.log(`Reservation response: ${response.status}`);
+                //console.log(`Response: ${response.data}`);
+            } catch (error) {
+                console.error(`Error in reservation request: ${error}`);
+            }
+
+        });
+
+        await Promise.all(reservationPromises);
+        console.log("Reservations processed.");
+    };
+
+
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView}>
@@ -274,6 +365,7 @@ const StezeryCourts = () => {
 
                     <Button title="Kontrola dostupnosti" onPress={handleCheckAvailability} />
                     <Button title="Test Request" onPress={handleTestRequest} />
+                    <Button title="Proved rezervaci" onPress={handleReservation} />
                 </View>
             </ScrollView>
         </SafeAreaView>
