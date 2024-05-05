@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import {StyleSheet, Text, View, Button, ActivityIndicator, TextInput} from 'react-native';
+import {StyleSheet, Text, View, Button, ActivityIndicator, TextInput, Modal} from 'react-native';
 import * as Location from 'expo-location';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -17,6 +17,7 @@ export default function App() {
     const [pictureTaken, setPictureTaken] = useState(false);
     const [name, setName] = useState('');
     const [searchResult, setSearchResult] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -62,6 +63,30 @@ export default function App() {
 
     return (
         <View style={styles.container}>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>
+                            {searchResult === 1 ?
+                                'Shoda nalezena!' :
+                                'Zatím vás nehledají. \n Zkuste své štěstí zítra.'}
+                        </Text>
+                        <Button
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => setModalVisible(!modalVisible)}
+                            title="OK"
+                        />
+                    </View>
+                </View>
+            </Modal>
+
             <Text style={styles.dataText}>Zadejte informace o hledané osobě</Text>
             <View style={styles.attribute}>
                 <Text style={styles.description}>Jméno: </Text>
@@ -79,6 +104,7 @@ export default function App() {
                     const result = await SearchFBI(name);
                     setSearchResult(result);
                     setLoading(false);
+                    setModalVisible(true);
                 }}
             />
             <Text>{searchResult}</Text>
@@ -147,4 +173,29 @@ const styles = StyleSheet.create({
         color: 'red',
         marginTop: 20,
     },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+    }
 });

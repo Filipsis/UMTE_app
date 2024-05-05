@@ -10,7 +10,7 @@ const handleSearch = async (name) => {
                 matchFound = true;
             }
         });
-        return matchFound ? 'Shoda' : 'Není shoda';
+        return matchFound ? 1 : 0;
     } catch (error) {
         console.error('Error:', error);
         return 'Chyba při hledání';
