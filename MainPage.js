@@ -6,7 +6,7 @@ import * as MediaLibrary from 'expo-media-library';
 import FetchAddress from './utils/FetchAddress';
 import TakePicture from "./utils/TakePicture";
 import SendEmail from "./utils/SendEmail";
-import axios from 'axios';
+import SearchFBI from "./utils/SearchFBI";
 
 export default function App() {
     const [address, setAddress] = useState('');
@@ -48,39 +48,6 @@ export default function App() {
         })();
     }, []);
 
-    const fetchAddressInfo = async () => {
-        setLoading(true);
-        try {
-            const fetchedAddress = await FetchAddress();
-            setAddress(fetchedAddress);
-        } catch (error) {
-            setError('Nepodarilo se zjistit adresu');
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSearch = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.get(`https://api.fbi.gov/wanted/v1/list?title=${name}`);
-            const data = response.data;
-            let matchFound = false;
-            data.items.forEach(item => {
-                if (item.title.toLowerCase().includes(name.toLowerCase())) {
-                    matchFound = true;
-                }
-            });
-            setSearchResult(matchFound ? 'Shoda' : 'Není shoda');
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setSearchResult('Chyba při hledání');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     if (openCamera) {
         return (
             <Camera
@@ -107,12 +74,28 @@ export default function App() {
             </View>
             <Button
                 title="Hledat"
-                onPress={handleSearch}
+                onPress={async () => {
+                    setLoading(true);
+                    const result = await SearchFBI(name);
+                    setSearchResult(result);
+                    setLoading(false);
+                }}
             />
             <Text>{searchResult}</Text>
             <Button
                 title="Zjisti moji adresu"
-                onPress={fetchAddressInfo}
+                onPress={async () => {
+                    setLoading(true);
+                    try {
+                        const fetchedAddress = await FetchAddress();
+                        setAddress(fetchedAddress);
+                    } catch (error) {
+                        setError('Nepodarilo se zjistit adresu');
+                        console.error(error);
+                    } finally {
+                        setLoading(false);
+                    }
+                }}
             />
             <Button
                 title="Pořiď foto"
