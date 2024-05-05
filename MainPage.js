@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button, ActivityIndicator } from 'react-native'
 import * as Location from 'expo-location';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
+import * as MailComposer from 'expo-mail-composer';
 
 export default function App() {
     const [address, setAddress] = useState('');
@@ -48,28 +49,47 @@ export default function App() {
         }
     };
 
-
     const takePicture = async () => {
         if (cameraRef.current && !pictureTaken) {
-            setPictureTaken(true);  // Set flag to prevent multiple invocations
-            const options = { quality: 0.5, base64: true };
-            try {
-                const data = await cameraRef.current.takePictureAsync(options);
-                const asset = await MediaLibrary.createAssetAsync(data.uri);
-            } catch (error) {
-                console.log('Chyba při pořizování fotky:', error);
-            } finally {
-                if (cameraRef.current) {
-                    setOpenCamera(false);
-                } else {
-                    console.log('Kamera není k dispozici');
+            setPictureTaken(true);
+            setTimeout(async () => {
+                try {
+                    const options = { quality: 0.5, base64: false };
+                    const data = await cameraRef.current.takePictureAsync(options);
+                    const asset = await MediaLibrary.createAssetAsync(data.uri);
+                    console.log('Foto uloženo do galerie:', asset.uri);
+                    const localUri = await MediaLibrary.getAssetInfoAsync(asset);
+                    console.log('Lokální URI souboru:', localUri.localUri);
+                    await sendEmailWithPhoto(localUri.localUri);
+                } catch (error) {
+                    console.log('Nepodařilo se pořídit foto:', error);
+                } finally {
+                    if (cameraRef.current) {
+                        setOpenCamera(false);
+                    } else {
+                        console.log('Kamera není dostupná.')
+                    }
                 }
-            }
+            }, 800);
+        }
+    };
+
+    const sendEmailWithPhoto = async (photoUri) => {
+        let available = await MailComposer.isAvailableAsync();
+        if (available) {
+            const emailOptions = {
+                recipients: [],
+                subject: "Někoho jsme našli",
+                body: "Tady ho máte:",
+                attachments: [photoUri],
+            };
+            await MailComposer.composeAsync(emailOptions);
+        } else {
+            console.log("e-mail není konfigurován na tomto zařízení.");
         }
     };
 
     useEffect(() => {
-        // Reset the pictureTaken flag when openCamera changes
         setPictureTaken(false);
     }, [openCamera]);
 
