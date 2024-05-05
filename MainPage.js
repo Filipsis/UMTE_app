@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, ActivityIndicator } from 'react-native';
+import {StyleSheet, Text, View, Button, ActivityIndicator, TextInput} from 'react-native';
 import * as Location from 'expo-location';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import FetchAddress from './utils/FetchAddress';
 import TakePicture from "./utils/TakePicture";
 import SendEmail from "./utils/SendEmail";
+import axios from 'axios';
 
 export default function App() {
     const [address, setAddress] = useState('');
@@ -14,6 +15,8 @@ export default function App() {
     const [openCamera, setOpenCamera] = useState(false);
     const cameraRef = useRef(null);
     const [pictureTaken, setPictureTaken] = useState(false);
+    const [name, setName] = useState('');
+    const [searchResult, setSearchResult] = useState('');
 
     useEffect(() => {
         (async () => {
@@ -58,6 +61,26 @@ export default function App() {
         }
     };
 
+    const handleSearch = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`https://api.fbi.gov/wanted/v1/list?title=${name}`);
+            const data = response.data;
+            let matchFound = false;
+            data.items.forEach(item => {
+                if (item.title.toLowerCase().includes(name.toLowerCase())) {
+                    matchFound = true;
+                }
+            });
+            setSearchResult(matchFound ? 'Shoda' : 'Není shoda');
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setSearchResult('Chyba při hledání');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (openCamera) {
         return (
             <Camera
@@ -72,6 +95,21 @@ export default function App() {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.dataText}>Zadejte informace o hledané osobě</Text>
+            <View style={styles.attribute}>
+                <Text style={styles.description}>Jméno: </Text>
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setName}
+                    value={name}
+                    placeholder="Jméno"
+                />
+            </View>
+            <Button
+                title="Hledat"
+                onPress={handleSearch}
+            />
+            <Text>{searchResult}</Text>
             <Button
                 title="Zjisti moji adresu"
                 onPress={fetchAddressInfo}
@@ -81,7 +119,7 @@ export default function App() {
                 onPress={() => setOpenCamera(true)}
             />
             {isLoading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#0000ff"/>
             ) : error ? (
                 <Text style={styles.error}>{error}</Text>
             ) : (
@@ -102,6 +140,24 @@ const styles = StyleSheet.create({
     dataText: {
         fontSize: 16,
         marginVertical: 10,
+    },
+    input: {
+        height: 40,
+        width: 150,
+        marginBottom: 12,
+        borderWidth: 1,
+        padding: 10,
+        marginRight: 20
+    },
+    description: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginRight: 8,
+    },
+    attribute: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
     },
     error: {
         fontSize: 18,
