@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {StyleSheet, Text, View, Button, ActivityIndicator, TextInput, Modal} from 'react-native';
 import * as Location from 'expo-location';
-import { Camera } from 'expo-camera';
+import { Camera } from 'expo-camera/legacy';
 import * as MediaLibrary from 'expo-media-library';
 import FetchAddress from './utils/FetchAddress';
 import TakePicture from "./utils/TakePicture";
@@ -49,6 +49,10 @@ export default function App() {
         })();
     }, []);
 
+    useEffect(() => {
+        console.log(Camera.Constants);
+    }, []);
+
     if (openCamera) {
         return (
             <Camera
@@ -73,6 +77,7 @@ export default function App() {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Hledaná osoba: {name}</Text>
                         <Text style={styles.modalText}>
                             {searchResult === 1 ?
                                 'Shoda nalezena!' :
@@ -81,8 +86,21 @@ export default function App() {
                         <Button
                             style={[styles.button, styles.buttonClose]}
                             onPress={() => setModalVisible(!modalVisible)}
-                            title="OK"
+                            title="Zavřít"
                         />
+                        {searchResult === 1 && (
+                            <>
+                                <Text style={styles.modalText}>Znáte ho? Pošlete nám e-mail!</Text>
+                                <Button
+                                    style={[styles.button, styles.buttonClose]}
+                                    onPress={() => {
+                                        setModalVisible(!modalVisible);
+                                        SendEmail(name);
+                                    }}
+                                    title="Poslat e-mail"
+                                />
+                            </>
+                        )}
                     </View>
                 </View>
             </Modal>

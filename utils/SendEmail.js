@@ -1,13 +1,12 @@
 import * as MailComposer from "expo-mail-composer";
 
-const sendEmailWithPhoto = async (photoUri) => {
+const sendEmail = async (name) => {
     let available = await MailComposer.isAvailableAsync();
     if (available) {
         const emailOptions = {
             recipients: [],
-            subject: "Někoho jsme našli",
-            body: "Tady ho máte:",
-            attachments: [photoUri],
+            subject: "Informace o hledané osobě",
+            body: `Mám informace o hledané osobě: ${name}`,
         };
         await MailComposer.composeAsync(emailOptions);
     } else {
@@ -15,4 +14,4 @@ const sendEmailWithPhoto = async (photoUri) => {
     }
 };
 
-export default sendEmailWithPhoto;
+export default sendEmail;
