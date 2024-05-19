@@ -30,7 +30,7 @@ function AppNavigator() {
         <NavigationContainer>
             <Tab.Navigator>
                 <Tab.Screen name="Databáze hledaných osob FBI" component={MainPage} options={{ tabBarLabel: 'Hledané osoby FBI' }} />
-                <Tab.Screen name="SecondPage" component={SecondPage} options={{ tabBarLabel: 'New Page' }} />
+                <Tab.Screen name="Moje poloha a blízká místa" component={SecondPage} options={{ tabBarLabel: 'Místa' }} />
                 <Tab.Screen name="Sekce tenisu" component={TennisStackScreen} options={{ tabBarLabel: 'Sekce Tenis' }} />
             </Tab.Navigator>
         </NavigationContainer>
