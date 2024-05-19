@@ -1,12 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {StyleSheet, Text, View, Button, ActivityIndicator, TextInput, Modal} from 'react-native';
 import * as Location from 'expo-location';
-import FetchAddress from './utils/FetchAddress';
 import SendEmail from "./utils/SendEmail";
 import SearchFBI from "./utils/SearchFBI";
 
 export default function App() {
-    const [address, setAddress] = useState('');
     const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [name, setName] = useState('');
@@ -84,28 +82,12 @@ export default function App() {
                 }}
             />
             <Text>{searchResult}</Text>
-            <Button
-                title="Zjisti moji adresu"
-                onPress={async () => {
-                    setLoading(true);
-                    try {
-                        const fetchedAddress = await FetchAddress();
-                        setAddress(fetchedAddress);
-                    } catch (error) {
-                        setError('Nepodarilo se zjistit adresu');
-                        console.error(error);
-                    } finally {
-                        setLoading(false);
-                    }
-                }}
-            />
+
             {isLoading ? (
                 <ActivityIndicator size="large" color="#0000ff"/>
             ) : error ? (
                 <Text style={styles.error}>{error}</Text>
-            ) : (
-                <Text style={styles.dataText}>Adresa: {address}</Text>
-            )}
+            ) : null}
         </View>
     );
 }

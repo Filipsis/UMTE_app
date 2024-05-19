@@ -67,10 +67,11 @@ function SecondPage() {
                     <Text style={styles.dataText}>Adresa: {address}</Text>
                 )}
                 <View style={styles.pickerContainer}>
+                    <Text style={styles.description}>Typ místa:</Text>
                     <TouchableOpacity onPress={() => setShowPicker(true)}>
                         <Text style={styles.description}>
                             {selectedType === 'bar' ? 'Bary'
-                                : selectedType === 'supermarket' ? 'Obchody' : 'Kostely'}
+                                : selectedType === 'supermarket' ? 'Obchody' : 'Zubaři'}
                         </Text>
                     </TouchableOpacity>
                     <Modal
@@ -87,22 +88,32 @@ function SecondPage() {
                             >
                                 <Picker.Item label="Bary" value="bar" />
                                 <Picker.Item label="Obchody" value="supermarket" />
-                                <Picker.Item label="Kostely" value="church" />
+                                <Picker.Item label="Zubaři" value="dentist" />
                             </Picker>
                             <Button title="OK" onPress={() => setShowPicker(false)} />
                         </View>
                     </Modal>
-
                 </View>
+                <Button
+                    title="Najdi nejbližší"
+                    onPress={findPlaces}
+                />
+                {places.map((place, index) => (
+                    <View key={index} style={styles.placeContainer}>
+                        <Text style={styles.placeName}>{place.name}</Text>
+                        <Text style={styles.placeRating}>Hodnocení: {place.rating || 'N/A'}</Text>
+                    </View>
+                ))}
+                <Text>{errorMsg}</Text>
+                <Button
+                    title="Reset"
+                    onPress={() => {
+                        setPlaces([]);
+                        setErrorMsg('');
+                        setAddress('');
+                    }}
+                />
             </View>
-            <Text>{errorMsg}</Text>
-            <Button
-                title="Najdi nejbližší"
-                onPress={findPlaces}
-            />
-            {places.map((place, index) => (
-                <Text key={index}>{place.name}</Text>
-            ))}
         </ScrollView>
     );
 }
@@ -114,6 +125,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     pickerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginVertical: 8,
     },
     description: {
@@ -138,7 +151,20 @@ const styles = StyleSheet.create({
     },
     error: {
         color: 'red',
+    },
+    placeContainer: {
+        marginVertical: 5,
+        alignItems: 'center',
+    },
+    placeName: {
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    placeRating: {
+        fontSize: 13,
+        color: 'gray',
     }
+
 });
 
 export default SecondPage;
