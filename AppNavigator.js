@@ -5,7 +5,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import MainPage from './MainPage';
 import SecondPage from './SecondPage';
 import StezeryLogin from './StezeryLogin';
-import ThirdPage from './ThirdPage';  // Note: This is declared but not used in your provided code.
 import StezeryMenu from './StezeryMenu';
 import TennisCourts from './TennisCourts';
 import TennisHome from './TennisHome';
@@ -30,7 +29,7 @@ function AppNavigator() {
     return (
         <NavigationContainer>
             <Tab.Navigator>
-                <Tab.Screen name="Home" component={MainPage} options={{ tabBarLabel: 'Home' }} />
+                <Tab.Screen name="Databáze hledaných osob FBI" component={MainPage} options={{ tabBarLabel: 'Hledané osoby FBI' }} />
                 <Tab.Screen name="SecondPage" component={SecondPage} options={{ tabBarLabel: 'New Page' }} />
                 <Tab.Screen name="Sekce tenisu" component={TennisStackScreen} options={{ tabBarLabel: 'Sekce Tenis' }} />
             </Tab.Navigator>
