@@ -1,24 +1,22 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, Linking } from 'react-native';
 
-function TennisHome({ route, navigation }) {
+function TennisHome({ navigation }) {
 
     return (
         <View style={styles.container}>
             <View style={styles.buttonContainer}>
-                <Text style={styles.header}>Přehled</Text>
-                <Button title="Přehled kurtů" onPress={() => navigation.navigate('TennisCourts')} />
-                <Text style={styles.header}>Volba sportovišť</Text>
-                <Button title="Stěžery" onPress={() => navigation.navigate('StezeryLogin')} />
-                <Button title="Sportpark HIT (TBD)" onPress={() => {/* Funkce pro správu HIT */}} />
-                <Button title="Tenis centrum DTJ (TBD)" onPress={() => {/* Funkce pro správu DTJ */}} />
-                <Text style={styles.header}>Správa</Text>
-                <Button title="Nastavení (TBD)" onPress={() => {/* Funkce správu účtu */}} />
+                <Text style={styles.header}>Přehled kurtů</Text>
+                <Button title="Kurty Hradec Králové" onPress={() => navigation.navigate('TennisCourts')} />
+                <View style={{ height: 30 }} />
+                <Text style={styles.header}>Přejít na rezervační systém</Text>
+                <Button title="Sokol Stěžery" onPress={() => Linking.openURL('http://www.sokolstezery.cz/ebooking/')}  />
+                <Button title="Sportpark HIT" onPress={() => Linking.openURL('https://memberzone.cz/sportparkhit/')} />
+                <Button title="Tenis centrum DTJ" onPress={() => Linking.openURL('https://www.rezzy.eu/tenant-6/schedules')} />
             </View>
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {

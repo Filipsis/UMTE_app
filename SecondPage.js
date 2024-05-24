@@ -44,8 +44,16 @@ function SecondPage() {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.container}>
+                <Text style={styles.header}>Aktuální adresa</Text>
+                {isLoading ? (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                ) : error ? (
+                    <Text style={styles.error}>{error}</Text>
+                ) : (
+                        <Text style={styles.dataText}>{address === '' ? '<stiskněte Zjistit adresu>' : address}</Text>
+                )}
                 <Button
-                    title="Zjisti moji adresu"
+                    title="Zjisti adresu"
                     onPress={async () => {
                         setLoading(true);
                         try {
@@ -59,23 +67,20 @@ function SecondPage() {
                         }
                     }}
                 />
-                {isLoading ? (
-                    <ActivityIndicator size="large" color="#0000ff" />
-                ) : error ? (
-                    <Text style={styles.error}>{error}</Text>
-                ) : (
-                    <Text style={styles.dataText}>Adresa: {address}</Text>
-                )}
+                <View style={{ height: 30 }} />
+                <View style={styles.pickerContainer}>
+                    <Text style={styles.header}>Nejbližší místa</Text>
+                </View>
                 <View style={styles.pickerContainer}>
                     <Text style={styles.description}>Typ místa:</Text>
                     <TouchableOpacity onPress={() => setShowPicker(true)}>
-                        <Text style={styles.description}>
+                        <Text style={styles.dataText}>
                             {selectedType === 'bar' ? 'Bary'
                                 : selectedType === 'supermarket' ? 'Obchody'
                                     : selectedType === 'dentist' ? 'Zubaři' : '<vyberte>'}
                         </Text>
                     </TouchableOpacity>
-                    <Modal
+                <Modal
                         transparent={true}
                         visible={showPicker}
                         animationType="slide"
@@ -96,7 +101,7 @@ function SecondPage() {
                     </Modal>
                 </View>
                 <Button
-                    title="Najdi nejbližší"
+                    title="Hledat"
                     onPress={findPlaces}
                 />
                 {places.map((place, index) => (
@@ -165,8 +170,11 @@ const styles = StyleSheet.create({
     placeRating: {
         fontSize: 13,
         color: 'gray',
+    },
+    header: {
+        fontSize: 20,
+        fontWeight: 'bold'
     }
-
 });
 
 export default SecondPage;
