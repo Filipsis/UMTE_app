@@ -63,7 +63,7 @@ export default function App() {
 
             <Text style={styles.dataText}>Zadejte informace o hledané osobě</Text>
             <View style={styles.attribute}>
-                <Text style={styles.description}>Jméno: </Text>
+                <Text style={styles.description}>Jméno a příjmení: </Text>
                 <TextInput
                     style={styles.input}
                     onChangeText={setName}
@@ -74,6 +74,10 @@ export default function App() {
             <Button
                 title="Hledat"
                 onPress={async () => {
+                    if (name === '') {
+                        console.log('Nebylo zadáno jméno');
+                        return;
+                    }
                     setLoading(true);
                     const result = await SearchFBI(name);
                     setSearchResult(result);
@@ -81,8 +85,6 @@ export default function App() {
                     setModalVisible(true);
                 }}
             />
-            <Text>{searchResult}</Text>
-
             {isLoading ? (
                 <ActivityIndicator size="large" color="#0000ff"/>
             ) : error ? (

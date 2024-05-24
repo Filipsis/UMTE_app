@@ -12,7 +12,7 @@ function SecondPage() {
     const [address, setAddress] = useState('');
     const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [selectedType, setSelectedType] = useState('restaurant');
+    const [selectedType, setSelectedType] = useState('');
     const [showPicker, setShowPicker] = useState(false);
 
     useEffect(() => {
@@ -29,7 +29,7 @@ function SecondPage() {
     }, []);
 
     const findPlaces = async () => {
-        if (!location) return;
+        if (!location || selectedType === '<vyberte>') return;
 
         try {
             const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.coords.latitude},${location.coords.longitude}&radius=500&type=${selectedType}&key=AIzaSyBXXdUsE24GqfwOPONTlxiw41LkMHoruPM`);
@@ -71,7 +71,8 @@ function SecondPage() {
                     <TouchableOpacity onPress={() => setShowPicker(true)}>
                         <Text style={styles.description}>
                             {selectedType === 'bar' ? 'Bary'
-                                : selectedType === 'supermarket' ? 'Obchody' : 'Zubaři'}
+                                : selectedType === 'supermarket' ? 'Obchody'
+                                    : selectedType === 'dentist' ? 'Zubaři' : '<vyberte>'}
                         </Text>
                     </TouchableOpacity>
                     <Modal
@@ -111,6 +112,7 @@ function SecondPage() {
                         setPlaces([]);
                         setErrorMsg('');
                         setAddress('');
+                        setSelectedType('<vyberte>');
                     }}
                 />
             </View>
