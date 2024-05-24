@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {StyleSheet, Text, View, Button, ActivityIndicator, TextInput, Modal} from 'react-native';
+import {StyleSheet, Text, View, Button, ActivityIndicator, TextInput, Modal, Image} from 'react-native';
 import * as Location from 'expo-location';
 import SendEmail from "./utils/SendEmail";
 import SearchFBI from "./utils/SearchFBI";
@@ -61,6 +61,7 @@ export default function App() {
                 </View>
             </Modal>
 
+            <Image source={require('./assets/FBI_cover.JPEG')} style={{width: 200, height: 200}} />
             <Text style={styles.dataText}>Zadejte informace o hledané osobě</Text>
             <View style={styles.attribute}>
                 <Text style={styles.description}>Jméno a příjmení: </Text>
