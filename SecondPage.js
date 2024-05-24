@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Modal, Image } from 'react-native';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import FetchAddress from "./utils/FetchAddress";
@@ -42,15 +42,16 @@ function SecondPage() {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.container}>
+                <Image source={require('./assets/PLACES_cover.jpeg')} style={{width: 250, height: 250}} />
                 <Text style={styles.header}>Aktuální adresa</Text>
                 {isLoading ? (
                     <ActivityIndicator size="large" color="#0000ff" />
                 ) : error ? (
                     <Text style={styles.error}>{error}</Text>
                 ) : (
-                        <Text style={styles.dataText}>{address === '' ? '<stiskněte Zjistit adresu>' : address}</Text>
+                    <Text style={styles.dataText}>{address === '' ? '<stiskněte Zjistit adresu>' : address}</Text>
                 )}
                 <Button
                     title="Zjisti adresu"
@@ -80,26 +81,26 @@ function SecondPage() {
                                     : selectedType === 'dentist' ? 'Zubaři' : '<vyberte>'}
                         </Text>
                     </TouchableOpacity>
-                <Modal
-                        transparent={true}
-                        visible={showPicker}
-                        animationType="slide"
-                        onRequestClose={() => setShowPicker(false)}
-                    >
-                        <View style={styles.modalContent}>
-                            <Picker
-                                selectedValue={selectedType}
-                                onValueChange={(itemValue) => setSelectedType(itemValue)}
-                                style={{ height: 200, width: 300 }}
-                            >
-                                <Picker.Item label="Bary" value="bar" />
-                                <Picker.Item label="Obchody" value="supermarket" />
-                                <Picker.Item label="Zubaři" value="dentist" />
-                            </Picker>
-                            <Button title="OK" onPress={() => setShowPicker(false)} />
-                        </View>
-                    </Modal>
                 </View>
+                <Modal
+                    transparent={true}
+                    visible={showPicker}
+                    animationType="slide"
+                    onRequestClose={() => setShowPicker(false)}
+                >
+                    <View style={styles.modalContent}>
+                        <Picker
+                            selectedValue={selectedType}
+                            onValueChange={(itemValue) => setSelectedType(itemValue)}
+                            style={{ height: 200, width: 300 }}
+                        >
+                            <Picker.Item label="Bary" value="bar" />
+                            <Picker.Item label="Obchody" value="supermarket" />
+                            <Picker.Item label="Zubaři" value="dentist" />
+                        </Picker>
+                        <Button title="OK" onPress={() => setShowPicker(false)} />
+                    </View>
+                </Modal>
                 <Button
                     title="Hledat"
                     onPress={findPlaces}
@@ -126,8 +127,12 @@ function SecondPage() {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    scrollContainer: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    container: {
         alignItems: 'center',
         justifyContent: 'center',
     },

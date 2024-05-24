@@ -61,7 +61,8 @@ export default function App() {
                 </View>
             </Modal>
 
-            <Image source={require('./assets/FBI_cover.JPEG')} style={{width: 200, height: 200}} />
+            <Image source={require('./assets/FBI_cover.jpeg')} style={{width: 250, height: 250}} />
+            <View style={{ height: 30 }} />
             <Text style={styles.dataText}>Zadejte informace o hledané osobě</Text>
             <View style={styles.attribute}>
                 <Text style={styles.description}>Jméno a příjmení: </Text>
@@ -108,12 +109,12 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     input: {
-        height: 40,
-        width: 150,
+        height: 38,
+        width: 160,
         marginBottom: 12,
         borderWidth: 1,
-        padding: 10,
-        marginRight: 20
+        padding: 8,
+        marginRight: 10
     },
     description: {
         fontSize: 16,
