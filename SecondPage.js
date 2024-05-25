@@ -105,10 +105,6 @@ function SecondPage() {
                         <Button title="OK" onPress={() => setShowPicker(false)} />
                     </View>
                 </Modal>
-                <Button
-                    title="Hledat"
-                    onPress={findPlaces}
-                />
 
             {isLoadingPlaces ? (
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -122,7 +118,10 @@ function SecondPage() {
                         </View>
                     ))
             )}
-
+            <Button
+                title="Hledat"
+                onPress={findPlaces}
+            />
                 <Text>{errorMsg}</Text>
                 <Button
                     title="Reset"
