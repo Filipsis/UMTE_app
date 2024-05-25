@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {StyleSheet, Text, View, Button, ActivityIndicator, TextInput, Modal, Image} from 'react-native';
+import { StyleSheet, Text, View, Button, ActivityIndicator, TextInput, Modal, Image } from 'react-native';
 import * as Location from 'expo-location';
 import SendEmail from "./utils/SendEmail";
 import SearchFBI from "./utils/SearchFBI";
@@ -10,6 +10,7 @@ export default function App() {
     const [name, setName] = useState('');
     const [searchResult, setSearchResult] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [isEmailSending, setIsEmailSending] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -20,6 +21,16 @@ export default function App() {
             }
         })();
     }, []);
+
+    const handleSendEmail = async () => {
+        setIsEmailSending(true);
+        try {
+            await SendEmail(name);
+        } catch (error) {
+            console.error("Chyba při otevírání e-mailu:", error);
+        }
+        setIsEmailSending(false);
+    };
 
     return (
         <View style={styles.container}>
@@ -49,11 +60,9 @@ export default function App() {
                                 <Text style={styles.modalText}>Znáte ho? Pošlete nám e-mail!</Text>
                                 <Button
                                     style={[styles.button, styles.buttonClose]}
-                                    onPress={() => {
-                                        setModalVisible(!modalVisible);
-                                        SendEmail(name);
-                                    }}
+                                    onPress={handleSendEmail}
                                     title="Poslat e-mail"
+                                    disabled={isEmailSending}
                                 />
                             </>
                         )}
@@ -61,7 +70,7 @@ export default function App() {
                 </View>
             </Modal>
 
-            <Image source={require('./assets/FBI_cover.jpeg')} style={{width: 250, height: 250}} />
+            <Image source={require('./assets/FBI_cover.jpeg')} style={{ width: 250, height: 250 }} />
             <View style={{ height: 30 }} />
             <Text style={styles.dataText}>Zadejte informace o hledané osobě</Text>
             <View style={styles.attribute}>
@@ -88,7 +97,7 @@ export default function App() {
                 }}
             />
             {isLoading ? (
-                <ActivityIndicator size="large" color="#0000ff"/>
+                <ActivityIndicator size="large" color="#0000ff" />
             ) : error ? (
                 <Text style={styles.error}>{error}</Text>
             ) : null}
