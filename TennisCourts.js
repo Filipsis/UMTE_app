@@ -7,7 +7,6 @@ const TennisCourts = () => {
 
     const customScript2 = `
         var buttonClicked = false;
-
         function handleButtonClick() {
             if (!buttonClicked) {
                 const button = document.getElementById('BTN1');
@@ -38,10 +37,10 @@ const TennisCourts = () => {
                 }
             }
         }
-        
         handleButtonClick();
         true;
     `;
+
     const customScript3 = `
     setTimeout(function() {
         const cardColumns = document.querySelectorAll('.card-column');
@@ -56,8 +55,6 @@ const TennisCourts = () => {
     }, 5000);
     true;
 `;
-
-
 
     return (
         <SafeAreaView style={styles.container}>
@@ -111,13 +108,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     webviewOne: {
-        height: 200,  // Increased height for WebView3
+        height: 200,
     },
     webviewTwo: {
-        height: 400,  // Fixed height for specific adjustment
+        height: 400,
     },
     webviewThree: {
-        height: 500,  // Fixed height for specific adjustment
+        height: 500,
     },
     header: {
         fontSize: 20,

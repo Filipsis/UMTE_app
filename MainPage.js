@@ -29,6 +29,7 @@ export default function App() {
         } catch (error) {
             console.error("Chyba při otevírání e-mailu:", error);
         }
+        setModalVisible(false);
         setIsEmailSending(false);
     };
 
@@ -70,9 +71,9 @@ export default function App() {
                 </View>
             </Modal>
 
-            <Image source={require('./assets/FBI_cover.jpeg')} style={{ width: 250, height: 250 }} />
+            <Image source={require('./assets/FBI_cover.png')} style={{ width: 250, height: 250 }} />
             <View style={{ height: 30 }} />
-            <Text style={styles.dataText}>Zadejte informace o hledané osobě</Text>
+            <Text style={styles.header}>Zadejte informace o hledané osobě</Text>
             <View style={styles.attribute}>
                 <Text style={styles.description}>Jméno a příjmení: </Text>
                 <TextInput
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'top',
         padding: 20,
     },
     dataText: {
@@ -164,5 +165,10 @@ const styles = StyleSheet.create({
     modalText: {
         marginBottom: 15,
         textAlign: "center"
+    },
+    header: {
+        fontSize: 20,
+        marginBottom: 10,
+        fontWeight: 'bold'
     }
 });

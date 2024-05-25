@@ -23,7 +23,7 @@ function AppNavigator() {
     return (
         <NavigationContainer>
             <Tab.Navigator>
-                <Tab.Screen name="Databáze hledaných osob FBI" component={MainPage} options={{ tabBarLabel: 'Hledané osoby FBI' }} />
+                <Tab.Screen name="Databáze hledaných osob FBI" component={MainPage} options={{ tabBarLabel: 'Hledané osoby' }} />
                 <Tab.Screen name="Moje poloha a blízká místa" component={SecondPage} options={{ tabBarLabel: 'Místa' }} />
                 <Tab.Screen name="Sekce tenisu" component={ThirdPage} options={{ tabBarLabel: 'Tenis' }} />
             </Tab.Navigator>

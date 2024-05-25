@@ -10,7 +10,8 @@ function SecondPage() {
     const [errorMsg, setErrorMsg] = useState(null);
     const [places, setPlaces] = useState([]);
     const [address, setAddress] = useState('');
-    const [isLoading, setLoading] = useState(false);
+    const [isLoadingAddress, setLoadingAddress] = useState(false);
+    const [isLoadingPlaces, setLoadingPlaces] = useState(false);
     const [error, setError] = useState('');
     const [selectedType, setSelectedType] = useState('');
     const [showPicker, setShowPicker] = useState(false);
@@ -30,7 +31,7 @@ function SecondPage() {
 
     const findPlaces = async () => {
         if (!location || selectedType === '<vyberte>') return;
-
+        setLoadingPlaces(true);
         try {
             const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.coords.latitude},${location.coords.longitude}&radius=500&type=${selectedType}&key=AIzaSyBXXdUsE24GqfwOPONTlxiw41LkMHoruPM`);
             const data = response.data.results.slice(0, 5);
@@ -38,15 +39,18 @@ function SecondPage() {
         } catch (error) {
             setErrorMsg('Nepodařilo se stáhnout seznam míst');
             console.error(error);
+        } finally {
+            setLoadingPlaces(false);
         }
     };
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.container}>
-                <Image source={require('./assets/PLACES_cover.jpeg')} style={{width: 250, height: 250}} />
+        <View style={styles.container}>
+                <Image source={require('./assets/PLACES_cover.png')} style={{width: 250, height: 250}} />
+                <View style={{ height: 30 }} />
                 <Text style={styles.header}>Aktuální adresa</Text>
-                {isLoading ? (
+                {isLoadingAddress ? (
                     <ActivityIndicator size="large" color="#0000ff" />
                 ) : error ? (
                     <Text style={styles.error}>{error}</Text>
@@ -56,7 +60,7 @@ function SecondPage() {
                 <Button
                     title="Zjisti adresu"
                     onPress={async () => {
-                        setLoading(true);
+                        setLoadingAddress(true);
                         try {
                             const fetchedAddress = await FetchAddress();
                             setAddress(fetchedAddress);
@@ -64,7 +68,7 @@ function SecondPage() {
                             setError('Nepodařilo se zjistit adresu');
                             console.error(error);
                         } finally {
-                            setLoading(false);
+                            setLoadingAddress(false);
                         }
                     }}
                 />
@@ -105,12 +109,20 @@ function SecondPage() {
                     title="Hledat"
                     onPress={findPlaces}
                 />
-                {places.map((place, index) => (
-                    <View key={index} style={styles.placeContainer}>
-                        <Text style={styles.placeName}>{place.name}</Text>
-                        <Text style={styles.placeRating}>Hodnocení: {place.rating || 'N/A'}</Text>
-                    </View>
-                ))}
+
+            {isLoadingPlaces ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : error ? (
+                <Text style={styles.error}>{error}</Text>
+            ) : (
+                places.map((place, index) => (
+                        <View key={index} style={styles.placeContainer}>
+                            <Text style={styles.placeName}>{place.name}</Text>
+                            <Text style={styles.placeRating}>Hodnocení: {place.rating || 'N/A'}</Text>
+                        </View>
+                    ))
+            )}
+
                 <Text>{errorMsg}</Text>
                 <Button
                     title="Reset"
@@ -128,13 +140,12 @@ function SecondPage() {
 
 const styles = StyleSheet.create({
     scrollContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        paddingVertical: 20,
     },
     container: {
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        flexGrow: 1,
     },
     pickerContainer: {
         flexDirection: 'row',

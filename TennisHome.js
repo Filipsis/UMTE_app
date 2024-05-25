@@ -5,7 +5,7 @@ function TennisHome({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Image source={require('./assets/TENNIS_cover.jpeg')} style={{width: 250, height: 250}} />
+            <Image source={require('./assets/TENNIS_cover.png')} style={{width: 250, height: 250}} />
             <View style={{ height: 30 }} />
             <View style={styles.buttonContainer}>
                 <Text style={styles.header}>Přehled kurtů</Text>
@@ -24,12 +24,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'top',
         padding: 20
     },
     header: {
-        fontSize: 24,
-        marginBottom: 20,
+        fontSize: 20,
+        marginBottom: 10,
         fontWeight: 'bold'
     },
     buttonContainer: {
