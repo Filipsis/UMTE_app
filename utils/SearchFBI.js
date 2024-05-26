@@ -6,7 +6,7 @@ const handleSearch = async (name) => {
         const data = response.data;
         let matchFound = false;
         data.items.forEach(item => {
-            if (item.title.toLowerCase().includes(name.toLowerCase())) {
+            if (item.title.toLowerCase() === name.toLowerCase()) {
                 matchFound = true;
             }
         });

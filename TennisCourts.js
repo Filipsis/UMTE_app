@@ -3,52 +3,41 @@ import { ScrollView, StyleSheet, SafeAreaView, Text, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const TennisCourts = () => {
-    const customScript1 = `document.body.innerHTML = document.getElementById('calendarTable').outerHTML;true;`;
+    const customScript1 = `
+    document.body.innerHTML = 
+        document.getElementById('backWeekButton').outerHTML + 
+        document.getElementById('currentWeekButton').outerHTML + 
+        document.getElementById('nextWeekButton').outerHTML + 
+        document.getElementById('calendarTable').outerHTML; 
+    true;
+`;
 
     const customScript2 = `
+    document.addEventListener('DOMContentLoaded', (event) => {
+        console.log('DOMContentLoaded event fired');
         var buttonClicked = false;
 
         function handleButtonClick() {
-            if (!buttonClicked) {
-                const button = document.getElementById('BTN1');
-                if (button) {
-                    button.click();
-                    buttonClicked = true;
-                    const table = document.getElementById('TAB_ROZPIS_TabPanel_l_1_Table_lekce');
-                    if (table) {
-                        const style = document.createElement('style');
-                        style.textContent = \`
-                            .ntabulka, .ntabulka th, .ntabulka td {
-                                font-size: 12px;
-                                padding: 4px;
-                            }
-                            .ntabulka {
-                                min-width: 800px;
-                                table-layout: fixed;
-                            }
-                            body {
-                                overflow-x: scroll;
-                            }
-                        \`;
-                        document.head.appendChild(style);
-                        document.body.innerHTML = table.outerHTML;
-                    }
-                } else {
-                    setTimeout(handleButtonClick, 100);
-                }
+            const button = document.getElementById('BTN1');
+            if (button && !buttonClicked) {
+                button.click();
+                buttonClicked = true;
+            } else if (!buttonClicked) {
+                setTimeout(handleButtonClick, 100);
             }
         }
-        
+
         handleButtonClick();
-        true;
-    `;
+    });
+`;
+
     const customScript3 = `
     setTimeout(function() {
         const cardColumns = document.querySelectorAll('.card-column');
         if (cardColumns.length > 0) {
-            document.body.innerHTML = ''; // Clear the existing page content
+            document.body.innerHTML = ''; 
             cardColumns.forEach(function(column) {
-                document.body.appendChild(column.cloneNode(true)); // Append only the required divs
+                document.body.appendChild(column.cloneNode(true)); 
             });
         } else {
             document.body.innerHTML = 'No card-column divs found';
@@ -56,8 +45,6 @@ const TennisCourts = () => {
     }, 5000);
     true;
 `;
-
-
 
     return (
         <SafeAreaView style={styles.container}>
@@ -68,7 +55,6 @@ const TennisCourts = () => {
                     injectedJavaScript={customScript1}
                     injectedJavaScriptForMainFrameOnly={false}
                     style={styles.webviewOne}
-                    onLoad={() => console.log('WebView 1 loaded!')}
                     onMessage={(event) => {
                         console.log('event 1: ', event)
                     }}
@@ -79,7 +65,6 @@ const TennisCourts = () => {
                     injectedJavaScript={customScript2}
                     injectedJavaScriptForMainFrameOnly={false}
                     style={styles.webviewTwo}
-                  //  onLoad={() => console.log('WebView 2 loaded!')}
                     onMessage={(event) => {
                         console.log('event 2: ', event)
                     }}
@@ -92,7 +77,6 @@ const TennisCourts = () => {
                     injectedJavaScript={customScript3}
                     injectedJavaScriptForMainFrameOnly={false}
                     style={styles.webviewThree}
-                    onLoadEnd={() => console.log('WebView 3 loaded!')}
                     onMessage={(event) => {
                         console.log('WebView 3 content: ', event.nativeEvent.data);
                     }}
@@ -111,13 +95,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     webviewOne: {
-        height: 200,  // Increased height for WebView3
+        height: 200,
     },
     webviewTwo: {
-        height: 400,  // Fixed height for specific adjustment
+        height: 800,
     },
     webviewThree: {
-        height: 500,  // Fixed height for specific adjustment
+        height: 500,
     },
     header: {
         fontSize: 20,
