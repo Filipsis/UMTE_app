@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, Button, StyleSheet, Linking, Image} from 'react-native';
 
-function TennisHome({ navigation }) {
+function PageTennis({ navigation }) {
 
     return (
         <View style={styles.container}>
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default TennisHome;
+export default PageTennis;

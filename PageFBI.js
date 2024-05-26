@@ -47,26 +47,24 @@ export default function App() {
                     <View style={styles.modalView}>
                         <Text style={styles.modalText}>Hledaná osoba: {name}</Text>
                         <Text style={styles.modalText}>
-                            {searchResult === 1 ?
-                                'Shoda nalezena!' :
-                                'Zatím vás nehledají. \n Zkuste své štěstí zítra.'}
+                            {searchResult === 1 ? (
+                                <>
+                                    {'Shoda nalezena! \n'}
+                                    <Text style={styles.modalText}>Znáte ho? Pošlete nám e-mail!</Text>
+                                    <Button
+                                        onPress={handleSendEmail}
+                                        title="Poslat e-mail"
+                                        disabled={isEmailSending}
+                                    />
+                                </>
+                            ) : (
+                                'Zatím vás nehledají. \n Zkuste své štěstí zítra.'
+                            )}
                         </Text>
                         <Button
-                            style={[styles.button, styles.buttonClose]}
                             onPress={() => setModalVisible(!modalVisible)}
                             title="Zavřít"
                         />
-                        {searchResult === 1 && (
-                            <>
-                                <Text style={styles.modalText}>Znáte ho? Pošlete nám e-mail!</Text>
-                                <Button
-                                    style={[styles.button, styles.buttonClose]}
-                                    onPress={handleSendEmail}
-                                    title="Poslat e-mail"
-                                    disabled={isEmailSending}
-                                />
-                            </>
-                        )}
                     </View>
                 </View>
             </Modal>
@@ -114,10 +112,7 @@ const styles = StyleSheet.create({
         justifyContent: 'top',
         padding: 20,
     },
-    dataText: {
-        fontSize: 16,
-        marginVertical: 10,
-    },
+
     input: {
         height: 38,
         width: 160,

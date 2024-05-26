@@ -16,7 +16,7 @@ import {Picker} from '@react-native-picker/picker';
 import FetchAddress from "./utils/FetchAddress";
 import GetPressure from './utils/GetPressure';
 
-function SecondPage() {
+function PagePlaces() {
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
     const [places, setPlaces] = useState([]);
@@ -96,7 +96,7 @@ function SecondPage() {
                 ) : error ? (
                     <Text style={styles.error}>{error}</Text>
                 ) : (
-                    <Text style={[styles.text]}>{address === '' ? '<stiskněte Zjistit adresu>' : address}</Text>
+                    <Text style={[styles.text]}>{address === '' ? null : address}</Text>
                 )}
                 <Button
                     title="Zjisti adresu"
@@ -224,4 +224,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SecondPage;
+export default PagePlaces;
